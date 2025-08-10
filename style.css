@@ -1,33 +1,36 @@
+/* --- Basic Setup --- */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     background-color: #f4f4f4;
+    /* NEW: Define a grid layout for the body */
+    display: grid;
+    grid-template-columns: 1fr; /* Default to a single column */
+    transition: grid-template-columns 0.3s ease-in-out;
 }
 
-.container {
-    display: flex;
+/* NEW: Define the grid layout when the sidebar is visible */
+body.sidebar-visible {
+    /* Two columns: main content takes up remaining space, sidebar is 450px */
+    grid-template-columns: 1fr 450px;
 }
 
-/* --- Sidebar Styles (Common to both Mobile and Desktop) --- */
+/* --- Sidebar Styles --- */
 #josephus-sidebar {
-    width: 450px;
-    height: 100vh; /* Full viewport height */
+    /* Most styles are the same, but we remove positioning and transforms */
+    width: 450px; /* This now defines the grid column width */
+    height: 100vh;
     background-color: #2c3e50;
     color: #ecf0f1;
-    position: fixed; /* Fixed position for overlay/sidebar behavior */
-    top: 0;
-    right: 0;
-    transform: translateX(100%); /* Hidden off-screen to the right */
-    transition: transform 0.3s ease-in-out;
     overflow-y: auto;
     box-shadow: -2px 0 10px rgba(0,0,0,0.3);
-    display: flex;
+    display: none; /* Hide it completely by default */
     flex-direction: column;
-    z-index: 1000; /* Ensure it's on top of other content */
+    grid-column: 2; /* It will always be in the second grid column */
 }
 
-#josephus-sidebar.visible {
-    transform: translateX(0); /* Make it visible */
+body.sidebar-visible #josephus-sidebar {
+    display: flex; /* Show the sidebar when the body has the class */
 }
 
 .sidebar-header {
@@ -38,99 +41,60 @@ body {
     align-items: center;
     position: sticky;
     top: 0;
+    z-index: 10;
 }
 
-.sidebar-header h2 {
-    margin: 0;
-    font-size: 1.2em;
+.sidebar-header h2 { margin: 0; font-size: 1.2em; }
+#close-sidebar { background: none; border: none; color: #ecf0f1; font-size: 2em; cursor: pointer; }
+
+#josephus-content { padding: 15px; font-size: 0.9em; line-height: 1.6; }
+#josephus-content .parallel-entry { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #444; }
+#josephus-content .parallel-entry:last-child { border-bottom: none; }
+#josephus-content h4 { color: #f1c40f; margin-top: 0; }
+
+/* --- Main Content Wrapper --- */
+#main-content-wrapper {
+    grid-column: 1; /* It will always be in the first grid column */
+    overflow-y: auto; /* Allow the main content to scroll independently */
+    height: 100vh;
 }
 
-#close-sidebar {
-    background: none;
-    border: none;
-    color: #ecf0f1;
-    font-size: 2em;
-    cursor: pointer;
-}
-
-#josephus-content {
-    padding: 15px;
-    font-size: 0.9em;
-    line-height: 1.6;
-}
-
-#josephus-content .parallel-entry {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #444;
-}
-#josephus-content .parallel-entry:last-child {
-    border-bottom: none;
-}
-#josephus-content h4 {
-    color: #f1c40f;
-    margin-top: 0;
-}
-
-/* --- Main Content Area (Common Styles) --- */
 #main-content {
-    width: 100%; /* Take up full width */
-    padding: 20px;
-    transition: margin-right 0.3s ease-in-out;
-    box-sizing: border-box; /* Ensures padding is included in the width calculation */
+    padding: 20px 40px;
+    box-sizing: border-box;
 }
 
-#main-content header {
-    text-align: center;
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 20px;
+#main-content header, #luke-text-container {
     max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
 }
+#main-content header { border-bottom: 1px solid #ccc; margin-bottom: 20px; }
 
-#luke-text-container {
-    max-width: 800px;
-    margin: 0 auto; /* Center the text container */
-}
-
-/* --- Highlighted Luke Verse (Common Styles) --- */
-.parallel {
-    background-color: #eaf2ff;
-    cursor: pointer;
-    border-radius: 3px;
-}
-.parallel:hover {
-    background-color: #d4e3ff;
-}
-
+/* --- Highlighted Luke Verse --- */
+.parallel { background-color: #eaf2ff; cursor: pointer; border-radius: 3px; }
+.parallel:hover { background-color: #d4e3ff; }
 .chapter-title { font-size: 1.6em; }
 .verse-number { font-weight: bold; color: #888; }
 
-
 /* --- MEDIA QUERIES FOR RESPONSIVE DESIGN --- */
-
-/* For DESKTOP screens (width 769px and wider) */
-@media (min-width: 769px) {
-    #main-content.sidebar-visible {
-        margin-right: 450px; /* Push content over with a margin on the right */
+@media (max-width: 900px) {
+    /* On smaller screens, we go back to the overlay method */
+    body {
+        display: block; /* Disable the grid layout */
     }
-}
 
-/* For MOBILE screens (width 768px and narrower) */
-@media (max-width: 768px) {
     #josephus-sidebar {
-        width: 85%; /* Make the sidebar take up most of the screen width */
-        max-width: 400px; /* But not more than 400px */
+        position: fixed; /* Revert to fixed positioning */
+        transform: translateX(100%); /* Hide it off-screen again */
+        width: 85%;
+        max-width: 400px;
     }
 
-    /* On mobile, the main content does NOT get a margin.
-       The sidebar will simply slide over it as an overlay. */
-    #main-content.sidebar-visible {
-        margin-right: 0; 
+    body.sidebar-visible #josephus-sidebar {
+        transform: translateX(0); /* Slide it in */
     }
 
-    #main-content {
-        padding: 15px; /* Reduce padding slightly on smaller screens */
+    #main-content-wrapper {
+        height: auto; /* Revert height */
     }
 }
