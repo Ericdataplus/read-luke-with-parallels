@@ -1,27 +1,30 @@
+/* --- Basic Setup --- */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     background-color: #f4f4f4;
+    display: flex; /* Use Flexbox for the main layout */
 }
 
 /* --- Sidebar Styles --- */
 #josephus-sidebar {
     width: 450px;
-    height: 100vh;
+    height: 100vh; /* Full viewport height */
     background-color: #2c3e50;
     color: #ecf0f1;
-    position: fixed;
-    top: 0;
-    right: 0;
-    transform: translateX(100%); /* Hidden by default */
-    transition: transform 0.3s ease-in-out;
     overflow-y: auto;
     box-shadow: -2px 0 10px rgba(0,0,0,0.3);
-    z-index: 1000;
+    
+    /* Hiding mechanism: It will have 0 width and be invisible by default */
+    flex-shrink: 0; /* Prevent the sidebar from shrinking */
+    width: 0;
+    transition: width 0.3s ease-in-out;
+    visibility: hidden;
 }
 
 #josephus-sidebar.visible {
-    transform: translateX(0); /* Make it visible */
+    width: 450px; /* It becomes visible by gaining width */
+    visibility: visible;
 }
 
 .sidebar-header {
@@ -32,8 +35,9 @@ body {
     align-items: center;
     position: sticky;
     top: 0;
+    z-index: 10;
 }
-.sidebar-header h2 { margin: 0; font-size: 1.2em; }
+.sidebar-header h2 { margin: 0; font-size: 1.2em; white-space: nowrap; }
 #close-sidebar { background: none; border: none; color: #ecf0f1; font-size: 2em; cursor: pointer; }
 
 #josephus-content { padding: 15px; font-size: 0.9em; line-height: 1.6; }
@@ -41,15 +45,14 @@ body {
 #josephus-content .parallel-entry:last-child { border-bottom: none; }
 #josephus-content h4 { color: #f1c40f; margin-top: 0; }
 
+
 /* --- Main Content Area --- */
 #main-content {
+    flex-grow: 1; /* Allows this element to take up the remaining space */
+    height: 100vh; /* Full viewport height */
+    overflow-y: auto; /* The main content will scroll, not the body */
     padding: 20px 40px;
-    transition: margin-right 0.3s ease-in-out; /* The transition for the "push" effect */
-}
-
-/* THIS IS THE DESKTOP-FIRST BEHAVIOR THAT WORKED WELL */
-#main-content.sidebar-visible {
-    margin-right: 450px;
+    box-sizing: border-box;
 }
 
 #main-content header, #luke-text-container {
@@ -64,20 +67,28 @@ body {
 .chapter-title { font-size: 1.6em; }
 .verse-number { font-weight: bold; color: #888; }
 
+
 /* --- MEDIA QUERY FOR MOBILE RESPONSIVENESS --- */
-/* On screens 900px or less, OVERRIDE the desktop behavior */
 @media (max-width: 900px) {
+    body {
+        display: block; /* On mobile, disable the flexbox layout */
+    }
+
     #josephus-sidebar {
+        /* Revert to the fixed position overlay method for mobile */
+        position: fixed;
         width: 85%;
         max-width: 400px;
+        transform: translateX(100%); /* Hide off-screen */
+        transition: transform 0.3s ease-in-out; /* Use transform for mobile slide */
     }
 
-    /* This rule prevents the content from being pushed on mobile */
-    #main-content.sidebar-visible {
-        margin-right: 0; 
+    #josephus-sidebar.visible {
+        transform: translateX(0);
     }
-
+    
     #main-content {
+        height: auto; /* Let height be natural on mobile */
         padding: 15px;
     }
 }

@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setupEventListeners() {
+        // Event listener for clicking on a highlighted Luke verse
         lukeTextContainer.addEventListener('click', (event) => {
             const target = event.target.closest('.parallel');
             if (!target) return;
@@ -73,9 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Event listener for the close button
         closeSidebarBtn.addEventListener('click', hideSidebar);
 
-        // --- NEW LOGIC FOR TAP-TO-CLOSE ---
+        // Logic for tap-to-close on the main content area
         mainContent.addEventListener('click', (event) => {
             if (sidebar.classList.contains('visible') && !event.target.closest('.parallel')) {
                 hideSidebar();
@@ -85,12 +87,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showSidebar() {
         sidebar.classList.add('visible');
-        mainContent.classList.add('sidebar-visible');
     }
 
     function hideSidebar() {
         sidebar.classList.remove('visible');
-        mainContent.classList.remove('sidebar-visible');
     }
 
     initialize();
