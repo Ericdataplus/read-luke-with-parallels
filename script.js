@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // We target main-content again for the class toggle
     const mainContent = document.getElementById('main-content');
     const sidebar = document.getElementById('josephus-sidebar');
     const josephusContent = document.getElementById('josephus-content');
@@ -54,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setupEventListeners() {
-        // Event listener for clicking on a highlighted Luke verse
         lukeTextContainer.addEventListener('click', (event) => {
             const target = event.target.closest('.parallel');
             if (!target) return;
@@ -75,13 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Event listener for the close button
         closeSidebarBtn.addEventListener('click', hideSidebar);
 
         // --- NEW LOGIC FOR TAP-TO-CLOSE ---
-        // Add an event listener to the main content area
         mainContent.addEventListener('click', (event) => {
-            // Check if the sidebar is visible AND if the click was NOT on a parallel verse
             if (sidebar.classList.contains('visible') && !event.target.closest('.parallel')) {
                 hideSidebar();
             }
