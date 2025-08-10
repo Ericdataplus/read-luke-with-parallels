@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const body = document.body; // NEW: Get the body element
+    // We target main-content again for the class toggle
+    const mainContent = document.getElementById('main-content');
     const sidebar = document.getElementById('josephus-sidebar');
     const josephusContent = document.getElementById('josephus-content');
     const closeSidebarBtn = document.getElementById('close-sidebar');
@@ -53,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setupEventListeners() {
+        // Event listener for clicking on a highlighted Luke verse
         lukeTextContainer.addEventListener('click', (event) => {
             const target = event.target.closest('.parallel');
             if (!target) return;
@@ -73,15 +75,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Event listener for the close button
         closeSidebarBtn.addEventListener('click', hideSidebar);
+
+        // --- NEW LOGIC FOR TAP-TO-CLOSE ---
+        // Add an event listener to the main content area
+        mainContent.addEventListener('click', (event) => {
+            // Check if the sidebar is visible AND if the click was NOT on a parallel verse
+            if (sidebar.classList.contains('visible') && !event.target.closest('.parallel')) {
+                hideSidebar();
+            }
+        });
     }
 
     function showSidebar() {
-        body.classList.add('sidebar-visible'); // CHANGED: Apply class to body
+        sidebar.classList.add('visible');
+        mainContent.classList.add('sidebar-visible');
     }
 
     function hideSidebar() {
-        body.classList.remove('sidebar-visible'); // CHANGED: Apply class to body
+        sidebar.classList.remove('visible');
+        mainContent.classList.remove('sidebar-visible');
     }
 
     initialize();
